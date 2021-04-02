@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import MySQLdb
 from sqlalchemy import create_engine
 import pymysql
+import chardet      # 인코딩 타입 확인
 import requests
 import pprint
 from wordcloud import WordCloud
@@ -37,16 +38,22 @@ pp = pprint.PrettyPrinter(indent=4)
 komoran = Komoran()
 wordCounts = {}
 # for word in df['단어']:     # komoran 사용하지 않을 시에
-for word in df['제목']:
-    # words.append(word)
-    # print(type(word))       # <class 'list'>
-    nouns = komoran.nouns(word)
-    for i in nouns:
-        if len(i) == 1:
-            continue
-        if i not in wordCounts:
-            wordCounts[i] = 0
-        wordCounts[i] += 1
+try:
+    for word in df['제목']:
+        # words.append(word)
+        # print(type(word))       # <class 'list'>
+        # print(chardet.universaldetector(word))
+        nouns = komoran.nouns(word)
+        for i in nouns:
+            if len(i) == 1:
+                continue
+            if i not in wordCounts:
+                wordCounts[i] = 0
+            wordCounts[i] += 1
+except UnicodeDecodeError as e:
+    print(e)
+
+
 # pp.pprint(wordCounts)
 
 # 단어 구름 만들기
